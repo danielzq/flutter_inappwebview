@@ -64,8 +64,14 @@ public class ChromeSafariBrowserManager: NSObject, FlutterPlugin {
         let absoluteUrl = URL(string: url)!.absoluteURL
         
         if #available(iOS 9.0, *) {
-            
-            if let flutterViewController = UIApplication.shared.delegate?.window.unsafelyUnwrapped?.rootViewController as? FlutterViewController {
+            let topController: UIViewController?
+            let rootViewController = UIApplication.shared.windows.filter { $0.isKeyWindow }.first?.rootViewController
+            if let presentedViewController = rootViewController?.presentedViewController {
+                topController = presentedViewController
+            } else {
+                topController = rootViewController
+            }
+            if let flutterViewController = topController as? FlutterViewController {
                 let safariOptions = SafariBrowserOptions()
                 let _ = safariOptions.parse(options: options)
                 
